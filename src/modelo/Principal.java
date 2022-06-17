@@ -1,5 +1,5 @@
 package modelo;
-import interfaz.VentanaPrincipal;
+import interfaz.*;
 import javax.swing.JFrame;
 
 /*
@@ -18,7 +18,8 @@ public class Principal {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        VentanaPrincipal ventana = new VentanaPrincipal();
+        //VentanaPrincipal ventana = new VentanaPrincipal();
+        VentanaJuego ventana = new VentanaJuego();
         ventana.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
     
