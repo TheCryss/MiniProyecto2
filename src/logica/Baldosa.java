@@ -34,4 +34,16 @@ public class Baldosa {
          int rand =(int)(Math.random()*8)+2;
          return rand;
      }
+     
+     public boolean pair(int[] imageChose)
+     {
+         for (int i = 0; i < imageChose.length; i++) {
+             for (int j = 0; j < 3; j++) {
+                 if (imageChose[i]==imageChose[j] && j!=i) {
+                     return true;
+                 }
+             }
+         }        
+         return false;
+     }
 }
