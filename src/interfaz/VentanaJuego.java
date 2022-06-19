@@ -90,34 +90,58 @@ public class VentanaJuego extends JFrame {
     {
         
         if (miJuego.isInicioJuego()) {
-        for (int j = 0; j < miJuego.getCantidadBaldosas(); j++) 
+        System.out.println("PRIMERA");
+            for (int j = 0; j < miJuego.getCantidadBaldosas(); j++) 
         {
                         tileChose[j] = mibaldosa.choseTile();
                         for (int k = 0; k < j; k++) {
                             if (tileChose[k]==tileChose[j]) {
+                                System.out.println("Iguales");
+                                System.out.println(""+tileChose[k]+"|"+tileChose[j]);
                                 while (tileChose[k]==tileChose[j]){
                                     tileChose[j] = mibaldosa.choseTile();
+                                    k=0;
                                 }
+                                
+                                System.out.println("Distintas");
+                                System.out.println(""+tileChose[k]+"|"+tileChose[j]);
                             }
                         }
                         imageChose[j]= mibaldosa.choseImage();
                         lblB[tileChose[j]].setIcon(imagenes[imageChose[j]]);
         }
-        
+            
         } else {
+            System.out.println("SEGUNDA");
            int pos = miJuego.changeTitle();
            int tile =tileChose[pos];
-           int nTile =mibaldosa.choseTile();
+           int nTile =mibaldosa.choseTile();;
+           
+            for (int i = 0; i < tileChose.length; i++) {
+                if (tileChose[i]==nTile) {
+                                
+                    while (tileChose[i]==nTile){
+                        nTile = mibaldosa.choseTile();
+                        i=0;
+                    }
+            }
+            }
            int img = mibaldosa.choseImage();
-           lblB[tile].setIcon(imagenes[1]);
-           lblB[nTile].setIcon(imagenes[img]); 
+           lblB[tile].setIcon(imagenes[0]);
+           lblB[nTile].setIcon(imagenes[img]/*imagenes[6]*/); 
            tileChose[pos]= nTile;
+           System.out.println("img value:"+imageChose[pos]);
            imageChose[pos]= img;
            
+            System.out.println("tile pos :"+pos);
+            System.out.println("tile value:"+tile);
+            System.out.println("new tile value:"+nTile);
+            System.out.println("new img value:"+img);
         }
         
         
     }
+    
     private void iniciarComponentes()
     {
         pnlBaldosas = new JPanel(new GridLayout(4, 4, 1 ,1));
