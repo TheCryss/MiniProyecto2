@@ -31,7 +31,7 @@ public class Baldosa {
      
      public int choseImage()
      {
-         int rand =(int)(Math.random()*8)+2;
+         int rand =(int)(Math.random()*19)+1;
          return rand;
      }
      

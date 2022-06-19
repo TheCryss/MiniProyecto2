@@ -34,9 +34,11 @@ public class VentanaJuego extends JFrame {
    private JLabel[] lblB = new JLabel[16];
    private JLabel lblTime;
    private JLabel imgBoton;
-   private ImageIcon[] imagenes = new ImageIcon[10];
+   private final ImageIcon[] imagenes = new ImageIcon[20];
    private ImageIcon icoBoton;
    private Baldosa mibaldosa= new Baldosa();
+   private Juego miJuego = new Juego();
+   //private Ronda miRonda = new Ronda();
    private int[] tileChose= new int[4];
    private int[] imageChose= new int[4];
    
@@ -45,6 +47,10 @@ public class VentanaJuego extends JFrame {
    private TimerTask task;
    private TimerTask taskt;
    private int time;
+   
+  
+   
+   
    
    
    
@@ -63,6 +69,55 @@ public class VentanaJuego extends JFrame {
         SwingUtilities.updateComponentTreeUI(contenedorInicial);
     }
     
+    private void startGame()
+    {
+        miJuego.setCantidadBaldosas(4);
+    }
+    
+    private void winOrLose()
+    {
+        if (miJuego.isPlay()) {
+            if (mibaldosa.pair(imageChose) && !miJuego.isInicioJuego()) {
+                miJuego.setEnd(true);
+                System.out.println("Perdiste");
+            }
+            
+        }
+        
+    }
+    
+    private void paint()
+    {
+        
+        if (miJuego.isInicioJuego()) {
+        for (int j = 0; j < miJuego.getCantidadBaldosas(); j++) 
+        {
+                        tileChose[j] = mibaldosa.choseTile();
+                        for (int k = 0; k < j; k++) {
+                            if (tileChose[k]==tileChose[j]) {
+                                while (tileChose[k]==tileChose[j]){
+                                    tileChose[j] = mibaldosa.choseTile();
+                                }
+                            }
+                        }
+                        imageChose[j]= mibaldosa.choseImage();
+                        lblB[tileChose[j]].setIcon(imagenes[imageChose[j]]);
+        }
+        
+        } else {
+           int pos = miJuego.changeTitle();
+           int tile =tileChose[pos];
+           int nTile =mibaldosa.choseTile();
+           int img = mibaldosa.choseImage();
+           lblB[tile].setIcon(imagenes[1]);
+           lblB[nTile].setIcon(imagenes[img]); 
+           tileChose[pos]= nTile;
+           imageChose[pos]= img;
+           
+        }
+        
+        
+    }
     private void iniciarComponentes()
     {
         pnlBaldosas = new JPanel(new GridLayout(4, 4, 1 ,1));
@@ -70,20 +125,25 @@ public class VentanaJuego extends JFrame {
         pnlBaldosas.setBackground(Color.CYAN);
         int i=0;
       
+        //Creo array de imagenes
         for (ImageIcon imagen : imagenes){
-            imagen = new ImageIcon(getClass().getResource("/imagenes/"+(i+1)+".png"));
+            try {
+                imagen = new ImageIcon(getClass().getResource("/imagenes/"+(i+1)+".png"));
+            } catch (Exception e) {
+                imagen = new ImageIcon(getClass().getResource("/imagenes/"+(i+1)+".jpg"));
+            }
+            //imagen = new ImageIcon(getClass().getResource("/imagenes/"+(i+1)+".png"));
             Image image = (imagen).getImage().getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-            //imagen = new ImageIcon(image);
+            
             
             imagenes[i]= new ImageIcon(image);
             i++;
         }
-       
+       //Creo las etiquetas y les asigno una imagen 
         for (int j=0;j<lblB.length;j++) {
            
                 
-           lblB[j] = new JLabel(imagenes[1]);
-           //System.out.println("se creo"+i);
+           lblB[j] = new JLabel(imagenes[0]);
            lblB[j].setBackground(Color.red);
            pnlBaldosas.add(lblB[j]);
         }
@@ -101,47 +161,37 @@ public class VentanaJuego extends JFrame {
         imgBoton.setIcon(icoBoton);
         imgBoton.addMouseListener(new ManejoClick());
         
+        
+        
+            startGame();
         task= new TimerTask() {
             @Override
             public void run() {
                 int tic = 0;
-                if (tic%2==0) {              
-                    for (int j = 0; j < 4; j++) {
-                        lblB[tileChose[j]].setIcon(imagenes[1]);
+                if (tic%2==0 && !miJuego.isEnd()) {              
+                    if (miJuego.isEnd()==false) {
+                        paint();
+                    } else {
+                        System.out.println("Perdiste");
                     }
                     
-                    for (int j = 0; j < 4; j++) {
-                        tileChose[j] = mibaldosa.choseTile();
-                        for (int k = 0; k < j; k++) {
-                            if (tileChose[k]==tileChose[j]) {
-                                tileChose[j] = mibaldosa.choseTile();
-                            }
-                        }
-                        imageChose[j]= mibaldosa.choseImage();
-                        lblB[tileChose[j]].setIcon(imagenes[imageChose[j]]);
-                    }
-                    
-                    /*
-                    System.out.println("Imagenes");
+                    System.out.println("Imagenes -------------------");
                     for (int j = 0; j < imageChose.length; j++) {
                         System.out.println(""+imageChose[j]);
                     }
-                    System.out.println("--------------");
-                    */
-                    /*
-                    System.out.println("Tiles");
+                    System.out.println("Baldosa -------------------");
                     for (int j = 0; j < tileChose.length; j++) {
                         System.out.println(""+tileChose[j]);
                     }
-                    System.out.println("--------------");
-                    */
+                    
                 }                
                 tic++;
-                
+                winOrLose();
+                miJuego.setInicioJuego(false);
             }  
         };
-        timer.schedule(task, 10,3000
-        );
+        timer.schedule(task, 10,3000);
+        
         
        taskt= new TimerTask() {
             @Override
@@ -160,7 +210,7 @@ public class VentanaJuego extends JFrame {
         contenedorInicial.add(imgBoton);
        
        SwingUtilities.updateComponentTreeUI(contenedorInicial); 
-    }
+    }    
     
     
     private class ManejoClick extends MouseAdapter

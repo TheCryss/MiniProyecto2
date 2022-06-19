@@ -14,7 +14,7 @@ public class Ronda {
     private int aciertos;
     private int turno;
     
-    Ronda()
+    public Ronda()
     {
         turno++;
     }

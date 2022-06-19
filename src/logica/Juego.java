@@ -10,7 +10,10 @@ package logica;
  */
 public class Juego {
     private int cantidadBaldosas;
-    Juego()
+    private boolean inicioJuego = true;
+    private boolean end = false;
+    private boolean play= true;
+    public Juego()
     {
         
     }
@@ -22,5 +25,36 @@ public class Juego {
     public void setCantidadBaldosas(int cantidadBaldosas) {
         this.cantidadBaldosas = cantidadBaldosas;
     }
+
+    public boolean isInicioJuego() {
+        return inicioJuego;
+    }
+
+    public void setInicioJuego(boolean inicioJuego) {
+        this.inicioJuego = inicioJuego;
+    }
+    
+    public int changeTitle()
+    {
+        int rand = (int)(Math.random()*4);
+        return rand;
+    }
+
+    public boolean isEnd() {
+        return end;
+    }
+
+    public void setEnd(boolean end) {
+        this.end = end;
+    }
+
+    public boolean isPlay() {
+        return play;
+    }
+
+    public void setPlay(boolean play) {
+        this.play = play;
+    }
+    
      
 }
