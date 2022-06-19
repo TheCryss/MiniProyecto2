@@ -22,6 +22,8 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import logica.*;
 /**
@@ -31,10 +33,13 @@ import logica.*;
 
 public class VentanaJuego extends JFrame {
    private JPanel pnlBaldosas; 
+   private JPanel pnlVidas; 
    private JLabel[] lblB = new JLabel[16];
+   private JLabel[] lblC = new JLabel[3];
    private JLabel lblTime;
    private JLabel imgBoton;
    private final ImageIcon[] imagenes = new ImageIcon[20];
+   private final ImageIcon[] icoC = new ImageIcon[5];
    private ImageIcon icoBoton;
    private Baldosa mibaldosa= new Baldosa();
    private Juego miJuego = new Juego();
@@ -80,6 +85,7 @@ public class VentanaJuego extends JFrame {
             if (mibaldosa.pair(imageChose) && !miJuego.isInicioJuego()) {
                 miJuego.setEnd(true);
                 System.out.println("Perdiste");
+                
             }
             
         }
@@ -96,15 +102,15 @@ public class VentanaJuego extends JFrame {
                         tileChose[j] = mibaldosa.choseTile();
                         for (int k = 0; k < j; k++) {
                             if (tileChose[k]==tileChose[j]) {
-                                System.out.println("Iguales");
-                                System.out.println(""+tileChose[k]+"|"+tileChose[j]);
+                                //System.out.println("Iguales");
+                                //System.out.println(""+tileChose[k]+"|"+tileChose[j]);
                                 while (tileChose[k]==tileChose[j]){
                                     tileChose[j] = mibaldosa.choseTile();
                                     k=0;
                                 }
                                 
-                                System.out.println("Distintas");
-                                System.out.println(""+tileChose[k]+"|"+tileChose[j]);
+                                //System.out.println("Distintas");
+                                //System.out.println(""+tileChose[k]+"|"+tileChose[j]);
                             }
                         }
                         imageChose[j]= mibaldosa.choseImage();
@@ -130,16 +136,30 @@ public class VentanaJuego extends JFrame {
            lblB[tile].setIcon(imagenes[0]);
            lblB[nTile].setIcon(imagenes[img]/*imagenes[6]*/); 
            tileChose[pos]= nTile;
-           System.out.println("img value:"+imageChose[pos]);
+           //System.out.println("img value:"+imageChose[pos]);
            imageChose[pos]= img;
-           
+           /*
             System.out.println("tile pos :"+pos);
             System.out.println("tile value:"+tile);
             System.out.println("new tile value:"+nTile);
             System.out.println("new img value:"+img);
+*/        
+}
+        
+        
+    }
+    private void animateHeart()
+    {
+        for (int i = 0; i < 5; i++) {
+            try {
+                lblC[0].setIcon(icoC[i]);
+                Thread.sleep(50);
+            } catch (InterruptedException ex) {
+                
+            }
+            
+            
         }
-        
-        
     }
     
     private void iniciarComponentes()
@@ -147,6 +167,10 @@ public class VentanaJuego extends JFrame {
         pnlBaldosas = new JPanel(new GridLayout(4, 4, 1 ,1));
         pnlBaldosas.setBounds(90, 90, 500, 500);
         pnlBaldosas.setBackground(Color.CYAN);
+        
+        pnlVidas = new JPanel(new GridLayout(1, 4, 1, 1));
+        pnlVidas.setBounds(350, 20, 200, 50);
+        //pnlVidas.setBackground(Color.yellow);
         int i=0;
       
         //Creo array de imagenes
@@ -163,7 +187,21 @@ public class VentanaJuego extends JFrame {
             imagenes[i]= new ImageIcon(image);
             i++;
         }
-       //Creo las etiquetas y les asigno una imagen 
+        i=0;
+        
+        for (ImageIcon imagen: icoC) {
+            imagen = new ImageIcon(getClass().getResource("/imagenes/C"+(i+1)+".png"));
+            Image image = (imagen).getImage().getScaledInstance(50, 50, Image.SCALE_SMOOTH);
+            icoC[i]= new ImageIcon(image);
+            i++;
+        }
+        
+        for (int j = 0; j < lblC.length; j++) {
+            lblC[j]= new JLabel(icoC[0]);
+            pnlVidas.add(lblC[j]);
+            
+        }
+        
         for (int j=0;j<lblB.length;j++) {
            
                 
@@ -192,25 +230,18 @@ public class VentanaJuego extends JFrame {
             @Override
             public void run() {
                 int tic = 0;
+                winOrLose();
                 if (tic%2==0 && !miJuego.isEnd()) {              
                     if (miJuego.isEnd()==false) {
                         paint();
+                        
                     } else {
                         System.out.println("Perdiste");
                     }
-                    
-                    System.out.println("Imagenes -------------------");
-                    for (int j = 0; j < imageChose.length; j++) {
-                        System.out.println(""+imageChose[j]);
-                    }
-                    System.out.println("Baldosa -------------------");
-                    for (int j = 0; j < tileChose.length; j++) {
-                        System.out.println(""+tileChose[j]);
-                    }
-                    
+                    animateHeart();
                 }                
                 tic++;
-                winOrLose();
+                
                 miJuego.setInicioJuego(false);
             }  
         };
@@ -230,6 +261,7 @@ public class VentanaJuego extends JFrame {
         contenedorInicial = getContentPane();
         contenedorInicial.setLayout(null);
         contenedorInicial.add(pnlBaldosas);
+        contenedorInicial.add(pnlVidas);
         contenedorInicial.add(lblTime);
         contenedorInicial.add(imgBoton);
        
@@ -242,7 +274,14 @@ public class VentanaJuego extends JFrame {
 
         @Override
         public void mouseClicked(MouseEvent e) {
-            System.out.println(""+mibaldosa.pair(imageChose));
+            
+            try {
+                System.out.println(""+mibaldosa.pair(imageChose));
+                Thread.sleep(1500);
+                
+            } catch (InterruptedException ex) {
+                
+            }
         }
         
     }
