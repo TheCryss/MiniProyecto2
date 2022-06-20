@@ -48,12 +48,23 @@ public class VentanaJuego extends JFrame {
    private int[] imageChose= new int[4];
    
    private Timer timer = new Timer();
-   private Timer timert = new Timer();
    private TimerTask task;
+   
+   private Timer timert = new Timer();
    private TimerTask taskt;
+   
+   private final Timer timera = new Timer();
+   private TimerTask taska;
+   
+   private final Timer timerClick = new Timer();
+   private TimerTask taskClick;
+   
    private int time;
    
-  
+   private final Ronda miRonda = new Ronda();
+   
+   
+    
    
    
    
@@ -84,7 +95,7 @@ public class VentanaJuego extends JFrame {
         if (miJuego.isPlay()) {
             if (mibaldosa.pair(imageChose) && !miJuego.isInicioJuego()) {
                 miJuego.setEnd(true);
-                System.out.println("Perdiste");
+                System.out.println("fallaste");
                 
             }
             
@@ -97,8 +108,11 @@ public class VentanaJuego extends JFrame {
         
         if (miJuego.isInicioJuego()) {
         System.out.println("PRIMERA");
+            for (int i = 0; i < tileChose.length ;i++) {
+                lblB[tileChose[i]].setIcon(imagenes[0]);
+            }
             for (int j = 0; j < miJuego.getCantidadBaldosas(); j++) 
-        {
+            {
                         tileChose[j] = mibaldosa.choseTile();
                         for (int k = 0; k < j; k++) {
                             if (tileChose[k]==tileChose[j]) {
@@ -116,9 +130,11 @@ public class VentanaJuego extends JFrame {
                         imageChose[j]= mibaldosa.choseImage();
                         lblB[tileChose[j]].setIcon(imagenes[imageChose[j]]);
         }
+        miJuego.setInicioJuego(false);
+            
             
         } else {
-            System.out.println("SEGUNDA");
+           //System.out.println("SEGUNDA");
            int pos = miJuego.changeTitle();
            int tile =tileChose[pos];
            int nTile =mibaldosa.choseTile();;
@@ -150,16 +166,24 @@ public class VentanaJuego extends JFrame {
     }
     private void animateHeart()
     {
-        for (int i = 0; i < 5; i++) {
-            try {
-                lblC[0].setIcon(icoC[i]);
-                Thread.sleep(50);
-            } catch (InterruptedException ex) {
+            
+            taska= new TimerTask() {
+            int i=0;
+            @Override
+            public void run() {
                 
+                if (i==5) {
+                    //timera.cancel();
+                } else {
+                    //System.out.println("a");
+                    lblC[(miRonda.getFallos()-1)].setIcon(icoC[i]);
+                    i++;
+                }   
             }
+       };
             
-            
-        }
+       timera.schedule(taska, 1,50);
+       
     }
     
     private void iniciarComponentes()
@@ -225,24 +249,35 @@ public class VentanaJuego extends JFrame {
         
         
         
-            startGame();
+        startGame();
         task= new TimerTask() {
             @Override
             public void run() {
-                int tic = 0;
+                
                 winOrLose();
-                if (tic%2==0 && !miJuego.isEnd()) {              
+                
+                if ( !miJuego.isEnd()) {              
                     if (miJuego.isEnd()==false) {
                         paint();
                         
-                    } else {
-                        System.out.println("Perdiste");
-                    }
-                    animateHeart();
-                }                
-                tic++;
+                    } 
+                 
+                }     
                 
-                miJuego.setInicioJuego(false);
+                
+                if(miJuego.isEnd()){
+                        //System.out.println("Perdiste"); 
+                    if (miRonda.getFallos()>=3) {
+                        System.out.println("Perdiste");
+                    } else {
+                        miRonda.setFallos(+1);
+                        System.out.println("fallos: "+miRonda.getFallos());
+                        animateHeart();
+                        miJuego.setInicioJuego(true);
+                        paint();
+                    }
+                }
+                
             }  
         };
         timer.schedule(task, 10,3000);
@@ -271,17 +306,35 @@ public class VentanaJuego extends JFrame {
     
     private class ManejoClick extends MouseAdapter
     {
-
+        
         @Override
         public void mouseClicked(MouseEvent e) {
             
-            try {
-                System.out.println(""+mibaldosa.pair(imageChose));
-                Thread.sleep(1500);
+            animateHeart();
+            //System.out.println(""+mibaldosa.pair(imageChose));
+            
+            taskClick= new TimerTask() {
                 
-            } catch (InterruptedException ex) {
-                
-            }
+                @Override
+                public void run() {
+                    
+                    if (mibaldosa.pair(imageChose)) {
+                        System.out.println("Ganaste");
+                        timerClick.cancel();
+                    } else {
+                        if (miRonda.getFallos()<3) {
+                            animateHeart();
+                            miRonda.setFallos(+1);
+                            System.out.println("Fallos"+miRonda.getFallos());
+                        } else {
+                            System.out.println("Perdiste UWU");
+                        }
+                        
+                    }
+                }
+            };
+            //timerClick.schedule(taskClick, 1,1500);
+            
         }
         
     }

@@ -23,11 +23,11 @@ public class Ronda {
     }
 
     public void setPuntaje(int puntaje) {
-        this.puntaje = puntaje;
+        this.puntaje += puntaje;
     }
 
     public void setFallos(int fallos) {
-        this.fallos = fallos;
+        this.fallos += fallos;
     }
 
     public void setAciertos(int aciertos) {
