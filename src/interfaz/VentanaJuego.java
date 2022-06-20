@@ -63,6 +63,7 @@ public class VentanaJuego extends JFrame {
    
    private final Ronda miRonda = new Ronda();
    
+   private boolean action =false;
    
     
    
@@ -95,7 +96,7 @@ public class VentanaJuego extends JFrame {
         if (miJuego.isPlay()) {
             if (mibaldosa.pair(imageChose) && !miJuego.isInicioJuego()) {
                 miJuego.setEnd(true);
-                System.out.println("fallaste");
+                //System.out.println("fallaste");
                 
             }
             
@@ -160,17 +161,17 @@ public class VentanaJuego extends JFrame {
             System.out.println("new tile value:"+nTile);
             System.out.println("new img value:"+img);
 */        
-}
-        
-        
+        }   
     }
+    
+    
     private void animateHeart()
     {
             
-            taska= new TimerTask() {
-            int i=0;
-            @Override
-            public void run() {
+        taska= new TimerTask() {
+        int i=0;
+        @Override
+        public void run() {
                 
                 if (i==5) {
                     //timera.cancel();
@@ -247,6 +248,8 @@ public class VentanaJuego extends JFrame {
         imgBoton.setIcon(icoBoton);
         imgBoton.addMouseListener(new ManejoClick());
         
+        //imgBoton.setEnabled(false);
+        
         
         
         startGame();
@@ -264,6 +267,7 @@ public class VentanaJuego extends JFrame {
                  
                 }     
                 
+                    
                 
                 if(miJuego.isEnd()){
                         //System.out.println("Perdiste"); 
@@ -275,10 +279,12 @@ public class VentanaJuego extends JFrame {
                         animateHeart();
                         miJuego.setInicioJuego(true);
                         paint();
+                        miJuego.setEnd(false);
                     }
                 }
-                
-            }  
+            //action=true;    
+            }
+            
         };
         timer.schedule(task, 10,3000);
         
@@ -291,7 +297,7 @@ public class VentanaJuego extends JFrame {
             }
             
        };
-       timert.schedule(taskt, 1,1000);
+        timert.schedule(taskt, 1,1000);
        
         contenedorInicial = getContentPane();
         contenedorInicial.setLayout(null);
@@ -310,14 +316,14 @@ public class VentanaJuego extends JFrame {
         @Override
         public void mouseClicked(MouseEvent e) {
             
-            animateHeart();
-            //System.out.println(""+mibaldosa.pair(imageChose));
-            
-            taskClick= new TimerTask() {
+            //animateHeart();
+            if (!action) {
+                //System.out.println("se presiono");
+               taskClick= new TimerTask() {
                 
                 @Override
                 public void run() {
-                    
+                    //System.out.println(""+mibaldosa.pair(imageChose));
                     if (mibaldosa.pair(imageChose)) {
                         System.out.println("Ganaste");
                         timerClick.cancel();
@@ -325,18 +331,25 @@ public class VentanaJuego extends JFrame {
                         if (miRonda.getFallos()<3) {
                             animateHeart();
                             miRonda.setFallos(+1);
-                            System.out.println("Fallos"+miRonda.getFallos());
+                            //System.out.println("Fallos"+miRonda.getFallos());
                         } else {
-                            System.out.println("Perdiste UWU");
+                            System.out.println("Fin del Juego");
                         }
                         
                     }
+                    
+                    System.out.println("Valor accion: "+action);
                 }
             };
-            //timerClick.schedule(taskClick, 1,1500);
+            timerClick.schedule(taskClick, 1,1500); 
+            } else {
+                System.out.println("no se puede realizar");
+            }
+            
+            
             
         }
-        
+     
     }
 }
 
